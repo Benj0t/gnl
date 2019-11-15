@@ -113,9 +113,13 @@ int     get_next_line(int fd, char **line)
     int ret;
     int i;
 
-    i = 0;
-    // VERIFIER SI PRESENCE DE \N DANS LE STATIC
-    // COMBATTRE LE \0
+    if (ft_strlen(s[fd]) > 0 && (i = ft_charset(s[fd], '\n'))> 0)
+    {
+            
+        *line = ft_substr(s[fd], 0, i);
+        s[fd] = ft_substr(s[fd], i + 1, (ft_strlen(s[fd])));
+        return(1);
+    }
     if (!(buffer = ft_strnew(BUFFER_SIZE)))
         return (-1);
     if ((ret = read(fd, buffer, BUFFER_SIZE)) > 0)
@@ -139,18 +143,31 @@ int     get_next_line(int fd, char **line)
             get_next_line(fd, line);
         }
     }
-    else
-        return((ret == 0) ? 0 : -1);
+    else if (ret == 0 && ft_strlen(s[fd]) != 0)
+    {
+            
+        *line = ft_substr(s[fd], 0, ft_strlen(s[fd]));
+        s[fd] = ft_substr(s[fd], i + 1, (ft_strlen(s[fd])));
+    }
+    return((ret == 0) ? 0 : -1);
 }
 
 int main()
 {
     char *line;
     int fd = open("test", O_RDONLY);
-    printf("\n%d", get_next_line(fd, &line));
-    printf("\n%s",line);
-    printf("\n%d", get_next_line(fd, &line));
-    printf("\n%s", line);
-    printf("\n%d", get_next_line(fd, &line));
-    printf("\n%s", line);
+    get_next_line(fd, &line);
+    printf("%s\n",line);
+    get_next_line(fd, &line);
+    printf("%s\n", line);
+    get_next_line(fd, &line);
+    printf("%s\n", line);
+    get_next_line(fd, &line);
+    printf("%s\n", line);
+    get_next_line(fd, &line);
+    printf("%s\n", line);
+    get_next_line(fd, &line);
+    printf("%s\n", line);
+    get_next_line(fd, &line);
+    printf("%s\n", line);
 }
