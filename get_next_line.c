@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bemoreau <bemoreau@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 10:51:24 by bemoreau          #+#    #+#             */
-/*   Updated: 2019/12/03 15:28:22 by bemoreau         ###   ########.fr       */
+/*   Updated: 2019/12/04 00:10:23 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@
 
 typedef struct		s_struct
 {
-	int				bool;
 	int				ret;
-	int				i;
+	int				pos;
+	int				bool;
 	char 			*buffer;
 	char			*tmp;
-	char			*s[OPEN_MAX];
+	char			*s[4096];
 }					t_struct;
 
 int ft_strlen(char *str)
@@ -109,90 +109,72 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (pt);
 }
 
-int		ft_charset(char *str, char charset)
+int		ft_charset(char *str)
 {
 	int i;
 
 	if (!str)
-		return(-1);
+		return (-1);
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == charset)
-			return(i);
+		if (str[i] == '\n')
+			return (i);
 		i++;
 	}
 	return (-1);
 }
 
-int		ft_good(char **line, t_struct *v, int fd)
+int my_gnl(int fd, char **line, t_struct *v)
 {
-	char *tmp;
-
-	v->i = ft_charset(v->s[fd], '\n');
-	free(*line);
-	*line = ft_substr(v->s[fd], 0, v->i, 0);
-	tmp = ft_strdup(v->s[fd]);
-	v->s[fd] = ft_substr(tmp, v->i + 1, (ft_strlen(tmp) - (v->i)), 1);
-	return(1);
-}
-
-int		ft_goodf(char **line, t_struct *v, int fd)
-{
-	if (*line)
-		free(*line);
-	*line = ft_substr(v->buffer, 0, v->i, 0);
-	v->s[fd] = ft_substr(v->buffer, v->i + 1, (ft_strlen(v->buffer) - (v->i)), 1);
-	return (1);
+	while ((v->ret = read(fd, v->buffer, BUFFER_SIZE)) > 0)
+	{
+		if (!(v->tmp = ft_strjoin(v->s[fd], v->buffer)) || !(v->s[fd] = ft_strdup(v->tmp)) || !(v->buffer = ft_strnew(BUFFER_SIZE)))
+			return(-1);
+	}
+	free(v->buffer);
+	printf("%s\n", v->s[fd]);
+	if (v->pos >= 0)
+	{
+		*line = ft_substr(v->s[fd], 0, v->pos, 0);
+		v->tmp = ft_substr(v->s[fd], v->pos + 1, ft_strlen(v->s[fd]), 1);
+		v->s[fd] = ft_strdup(v->tmp);
+		return(1);
+	}
+	else if (v->ret == 0)
+		return((*line = ft_strdup(v->tmp)) ? 0 : -1);
+	else
+	{
+		free(line);
+		return (-1);
+	}
 }
 
 int		get_next_line(int fd, char **line)
 {
-	t_struct v;
+	static t_struct v;
 
-	v.i = 0;
-	if (!v.bool)
-	{
-		v.s[fd] = ft_strnew(BUFFER_SIZE);
-		v.bool = 1;
-	}
-	if (v.s[fd] && ((v.i = ft_charset(v.s[fd], '\n')) >= 0))
-		return (ft_good(line, &v, fd));
 	if (!(v.buffer = ft_strnew(BUFFER_SIZE)))
 		return (-1);
-	if ((v.ret = read(fd, v.buffer, BUFFER_SIZE)) > 0)
+	if (!v.bool)
 	{
-		if (v.s[fd])
-		{
-			v.tmp = ft_strjoin(v.s[fd], v.buffer);
-			v.buffer = ft_strdup(v.tmp);
-		}
-		if ((v.i = ft_charset(v.buffer, '\n')) >= 0)
-			return(ft_goodf(line, &v, fd));
-		v.s[fd] = ft_strdup(v.buffer);
-		get_next_line(fd, line);
+		if (!(v.s[fd] = ft_strnew(BUFFER_SIZE)))
+			return (-1);
+		v.bool = 1;
 	}
-	else if (v.ret == 0 && ft_strlen(v.s[fd]) != 0)
+	if ((v.pos = ft_charset(v.s[fd])) >= 0)
 	{
-		free(*line);
-		*line = ft_substr(v.s[fd], 0, (ft_strlen(v.s[fd])), 0);
-		v.s[fd] = ft_substr(v.s[fd], v.i, ft_strlen(v.s[fd]), 1);
-		if (ft_charset(v.s[fd], '\n') < 0)
-			free(v.s[fd]);
-		free(v.buffer);
-		return(0);
+		(*line) ? free(*line) : NULL;
+		if (!(*line = ft_substr(v.s[fd], 0, v.pos, 0)) || !(v.tmp = ft_substr(v.s[fd], v.pos + 1, ft_strlen(v.s[fd]), 1)))
+			return (-1);
+		return ((v.s[fd] = ft_strdup(v.tmp)) ? 1 : -1);
 	}
-	else
-		free(v.buffer);
-	return ((v.ret == 0 && ft_charset(v.s[fd], '\n') < 0) ? 0 : 1);
-}
-
-void	ft_putendl(char *str)
-{
-	int i = 0;
-	while (str[i])
-		write(1, &(str[i++]), 1);
-	write(1, "\n", 1);
+	if (v.ret == 0 && ft_strlen(v.s[fd]) != 0 && v.pos == -1)
+	{
+		(*line) ? free(*line) : NULL;
+		return ((*line = ft_strdup(v.s[fd])) ? 0 : -1);
+	}
+	return (my_gnl(fd, line, &v));
 }
 
 int			main()
@@ -202,13 +184,11 @@ int			main()
 	int		i;
 
 	line = NULL;
-	fd = open("test", O_RDONLY);
+	fd = open("capital", O_RDONLY);
 	while ((i = get_next_line(fd, &line)))
 	{
-		//printf("gnl : %d, ", i);
-		ft_putendl(line);
+		printf("%s\n", line);
 	}
 	close(fd);
-	while (1);
 	return(0);
 }
