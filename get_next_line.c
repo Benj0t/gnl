@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: bemoreau <bemoreau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 10:51:24 by bemoreau          #+#    #+#             */
-/*   Updated: 2019/12/12 13:52:44 by marvin           ###   ########.fr       */
+/*   Updated: 2019/12/12 18:58:11 by bemoreau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,15 @@ int		get_next_line(int fd, char **line)
 {
 	static t_struct v;
 
-	if (!line || fd < 0 || BUFFER_SIZE <= 0 || !(v.buffer = ft_strnew(BUFFER_SIZE)))
-		return (ft_free(line));
-	if (!v.bool)
-		if (!(v.s[fd] = ft_strnew(NULL)))
+	if (line == NULL || fd < 0 || BUFFER_SIZE <= 0 || !(v.buffer = ft_strnew(BUFFER_SIZE)))
+		return ((line == NULL) ? -1 : ft_free(line));
+	v.bool[fd] += 1;
+	if (!v.s[fd])
+	{
+		if (!(v.s[fd] = ft_strnew(0)))
 			return (ft_free(line));
-	v.bool = 1;
+		v.fd = fd;
+	}
 	if ((v.pos = ft_charset(v.s[fd])) >= 0)
 	{
 		if (!(*line = ft_substr(v.s[fd], 0, v.pos, 0)) || !(v.tmp = ft_substr(v.s[fd], v.pos + 1, ft_strlen(v.s[fd]), 1)))
@@ -81,35 +84,4 @@ int		get_next_line(int fd, char **line)
 	if (v.ret == 0 && ft_strlen(v.s[fd]) != 0 && v.pos == -1)
 		return ((*line = ft_strdup(v.s[fd])) ? 0 : ft_free(line));
 	return (my_gnl(fd, line, &v));
-}
-
-void ft_putendl(unsigned char *str)
-{
-	while (*str)
-	{
-		write(1, &(*str), 1);
-		str++;
-	}
-	write(1, "\n", 1);
-}
-
-int			main()
-{
-	int		fd;
-	char	*line;
-	int		i;
-
-	line = NULL;
-	fd = open("germaine", O_RDONLY);
-	while ((i = get_next_line(fd, &line)) > 0)
-	{
-		ft_putendl((unsigned char *)line);
-		free(line);
-		//printf("%d\n", i);
-	}
-	ft_putendl((unsigned char *)line);
-	//printf("%d\n", i);
-	free(line);
-	close(fd);
-	return (0);
 }

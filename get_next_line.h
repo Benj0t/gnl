@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: bemoreau <bemoreau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 10:57:49 by bemoreau          #+#    #+#             */
-/*   Updated: 2019/12/12 13:51:52 by marvin           ###   ########.fr       */
+/*   Updated: 2019/12/12 18:58:03 by bemoreau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@
 
 typedef struct		s_struct
 {
+	int				fd;
 	int				ret;
 	int				pos;
-	int				bool;
+	int				bool[OPEN_MAX];
 	char 			*buffer;
 	char			*tmp;
 	char			*s[OPEN_MAX];
