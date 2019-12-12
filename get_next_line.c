@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 10:51:24 by bemoreau          #+#    #+#             */
-/*   Updated: 2019/12/12 13:38:30 by marvin           ###   ########.fr       */
+/*   Updated: 2019/12/12 13:52:44 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int		get_next_line(int fd, char **line)
 	if (!line || fd < 0 || BUFFER_SIZE <= 0 || !(v.buffer = ft_strnew(BUFFER_SIZE)))
 		return (ft_free(line));
 	if (!v.bool)
-		if (!(v.s[fd] = ft_strnew(BUFFER_SIZE)))
+		if (!(v.s[fd] = ft_strnew(NULL)))
 			return (ft_free(line));
 	v.bool = 1;
 	if ((v.pos = ft_charset(v.s[fd])) >= 0)
@@ -83,7 +83,7 @@ int		get_next_line(int fd, char **line)
 	return (my_gnl(fd, line, &v));
 }
 
-void ft_putendl(char *str)
+void ft_putendl(unsigned char *str)
 {
 	while (*str)
 	{
@@ -100,14 +100,14 @@ int			main()
 	int		i;
 
 	line = NULL;
-	fd = open("42TESTERS-GNL/files/mix_marge2", O_RDONLY);
+	fd = open("germaine", O_RDONLY);
 	while ((i = get_next_line(fd, &line)) > 0)
 	{
-		ft_putendl(line);
+		ft_putendl((unsigned char *)line);
 		free(line);
 		//printf("%d\n", i);
 	}
-	ft_putendl(line);
+	ft_putendl((unsigned char *)line);
 	//printf("%d\n", i);
 	free(line);
 	close(fd);
