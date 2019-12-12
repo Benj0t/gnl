@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 10:57:49 by bemoreau          #+#    #+#             */
-/*   Updated: 2019/12/09 17:27:53 by marvin           ###   ########.fr       */
+/*   Updated: 2019/12/12 13:28:10 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ typedef struct		s_struct
 	int				bool;
 	char 			*buffer;
 	char			*tmp;
-	char			*s[OPEN_MAX];
+	char			*s[4096];
 }					t_struct;
 
 int		ft_strlen(char *str);

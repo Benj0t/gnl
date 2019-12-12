@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 10:51:24 by bemoreau          #+#    #+#             */
-/*   Updated: 2019/12/09 17:12:04 by marvin           ###   ########.fr       */
+/*   Updated: 2019/12/12 13:38:30 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,11 @@ int my_gnl(int fd, char **line, t_struct *v)
 {
 	while ((v->ret = read(fd, v->buffer, BUFFER_SIZE)) > 0 && (v->pos = ft_charset(v->s[fd])) < 0)
 	{
+		v->buffer[v->ret] = '\0';
 		if (!(v->tmp = ft_strjoin(v->s[fd], v->buffer)) || !(v->s[fd] = ft_strdup(v->tmp)) || !(v->buffer = ft_strnew(BUFFER_SIZE)))
 			return (ft_free(line));
 	}
+	v->buffer[v->ret] = '\0';
 	if (!(v->tmp = ft_strjoin(v->s[fd], v->buffer)) || !(v->s[fd] = ft_strdup(v->tmp)) || !(v->buffer = ft_strnew(BUFFER_SIZE)))
 			return (ft_free(line));
 	free(v->buffer);
@@ -81,7 +83,6 @@ int		get_next_line(int fd, char **line)
 	return (my_gnl(fd, line, &v));
 }
 
-
 void ft_putendl(char *str)
 {
 	while (*str)
@@ -99,15 +100,15 @@ int			main()
 	int		i;
 
 	line = NULL;
-	fd = open("Rubadub", O_RDONLY);
-	while ((i = get_next_line(fd, &line)) != 0)
+	fd = open("42TESTERS-GNL/files/mix_marge2", O_RDONLY);
+	while ((i = get_next_line(fd, &line)) > 0)
 	{
 		ft_putendl(line);
 		free(line);
-		printf("%d\n", i);
+		//printf("%d\n", i);
 	}
 	ft_putendl(line);
-	printf("%d\n", i);
+	//printf("%d\n", i);
 	free(line);
 	close(fd);
 	return (0);
