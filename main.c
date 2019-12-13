@@ -17,7 +17,7 @@ int			main()
 	int		i;
 
 	line = NULL;
-	fd = open("42TESTERS-GNL/files/empty_lines", O_RDONLY);
+	fd = open("capital", O_RDONLY);
 	while ((i = get_next_line(fd, &line)) > 0)
 	{
 		ft_putendl((unsigned char *)line);
@@ -27,14 +27,7 @@ int			main()
 	ft_putendl((unsigned char *)line);
 	//printf("%d\n", i);
 	free(line);
-	//close(fd);
-	fd = open("42TESTERS-GNL/files/alphabet", O_RDONLY);
-	while ((i = get_next_line(fd, &line)) > 0)
-	{
-		ft_putendl((unsigned char *)line);
-		free(line);
-		//printf("%d\n", i);
-	}
-	//system("leaks a.out");
+	close(fd);
+	system("leaks a.out");
 	return (0);
 }
