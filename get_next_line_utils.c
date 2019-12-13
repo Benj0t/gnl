@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bemoreau <bemoreau@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/12/13 06:44:06 by bemoreau          #+#    #+#             */
+/*   Updated: 2019/12/13 06:44:18 by bemoreau         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
-int ft_strlen(char *str)
+int		ft_strlen(char *str)
 {
 	int i;
 
@@ -31,8 +43,8 @@ char	*ft_calloc(int count, int size)
 {
 	char	*ret;
 	char	*c;
-	int	i;
-	int	len;
+	int		i;
+	int		len;
 
 	if (size <= 0 || count <= 0)
 	{
@@ -55,7 +67,6 @@ char	*ft_calloc(int count, int size)
 	ret[i] = '\0';
 	return (ret);
 }
-
 
 char	*ft_substr(char *s, unsigned int start, size_t len, int bool)
 {
