@@ -108,7 +108,5 @@ int		get_next_line(int fd, char **line)
 		free(v.buffer);
 		return (ft_ret(&v, line, fd, 1));
 	}
-	else if (v.ret == 0 && v.len != 0 && v.pos == -1)
-		return (ft_ret(&v, line, fd, 0));
 	return (my_gnl(fd, line, &v));
 }
