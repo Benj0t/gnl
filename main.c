@@ -1,4 +1,5 @@
 #include "get_next_line.h"
+#include <fcntl.h>
 
 void ft_putendl(unsigned char *str)
 {
