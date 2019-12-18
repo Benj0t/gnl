@@ -14,8 +14,6 @@
 
 static int		ft_free(char **line, t_struct *v, int fd)
 {
-	if (v->tmp)
-		free(v->tmp);
 	if (v->s[fd])
 		free(v->s[fd]);
 	if (v->buffer)

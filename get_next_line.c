@@ -3,25 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bemoreau <bemoreau@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 10:51:24 by bemoreau          #+#    #+#             */
-/*   Updated: 2019/12/16 19:22:47 by bemoreau         ###   ########.fr       */
+/*   Updated: 2019/12/17 21:55:32 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
+
 
 static int		ft_free(char **line, t_struct *v, int fd)
 {
 	if (v->tmp)
-		free(v->s[fd]);
+		free(v->tmp);
 	if (v->s[fd])
 		free(v->s[fd]);
 	if (v->buffer)
 		free(v->buffer);
 	if (*line)
 		free(*line);
+	v->tmp = NULL;
+	v->s[fd] = NULL;
+	v->buffer = NULL;
 	line = NULL;
 	return (-1);
 }
@@ -49,7 +54,6 @@ static int		ft_ret(t_struct *v, char **line, int fd, int bool)
 	if (bool == 0)
 	{
 		*line = ft_strdup(v->s[fd], v->len);
-		v->s[fd] = NULL;
 		return (0);
 	}
 	if (bool == 1 || bool == 2)
@@ -59,11 +63,9 @@ static int		ft_ret(t_struct *v, char **line, int fd, int bool)
 			return (ft_free(line, v, fd));
 		if (!(v->tmp = ft_substr(v->s[fd], v->pos + 1, v->len, 1)))
 			return (ft_free(line, v, fd));
-		if (bool == 2)
-			if (!(v->s[fd] = ft_strdup(v->tmp, v->len)))
+		if (bool == 2 && !(v->s[fd] = ft_strdup(v->tmp, v->len)))
 				return (ft_free(line, v, fd));
-		if (bool == 1)
-			if (!(v->s[fd] = ft_strdup(v->tmp, v->len)))
+		if (bool == 1 && !(v->s[fd] = ft_strdup(v->tmp, v->len)))
 				return (ft_free(line, v, fd));
 		return (1);
 	}
@@ -88,8 +90,9 @@ static int		my_gnl(int fd, char **line, t_struct *v)
 		return (ft_free(line, v, fd));
 	if (!(v->s[fd] = ft_strdup(v->tmp, v->len)))
 		return (ft_free(line, v, fd));
-	free(v->buffer);
 	v->pos = ft_charset(v->s[fd]);
+	free(v->buffer);
+	v->buffer = NULL;
 	if (v->pos >= 0)
 		return (ft_ret(v, line, fd, 2));
 	else if (v->ret == 0)
@@ -114,6 +117,7 @@ int				get_next_line(int fd, char **line)
 	if ((v.pos = ft_charset(v.s[fd])) >= 0)
 	{
 		free(v.buffer);
+		v.buffer = NULL;
 		return (ft_ret(&v, line, fd, 1));
 	}
 	return (my_gnl(fd, line, &v));
