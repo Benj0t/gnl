@@ -6,7 +6,7 @@
 /*   By: bemoreau <bemoreau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/13 06:44:06 by bemoreau          #+#    #+#             */
-/*   Updated: 2019/12/16 12:29:36 by bemoreau         ###   ########.fr       */
+/*   Updated: 2019/12/18 18:47:37 by bemoreau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ char	*ft_strdup(char *src, int len)
 		str[i] = src[i];
 	str[i] = '\0';
 	free(src);
+	src = NULL;
 	return (str);
 }
 
@@ -50,8 +51,8 @@ char	*ft_calloc(int count, int size)
 	{
 		if (!(c = (char *)malloc(1)))
 			return (NULL);
-		c[0] = 0;
-		return ((void *)c);
+		c[0] = '\0';
+		return (c);
 	}
 	len = size * count;
 	i = 0;
@@ -83,7 +84,10 @@ char	*ft_substr(char *s, unsigned int start, size_t len, int bool)
 			str[i++] = s[start++];
 	str[i] = '\0';
 	if (bool == 1)
+	{
 		free(s);
+		s = NULL;
+	}
 	return (str);
 }
 
@@ -105,5 +109,6 @@ char	*ft_strjoin(char *s1, char *s2, int len)
 		pt[i++] = s2[j++];
 	pt[len] = '\0';
 	free(s1);
+	s1 = NULL;
 	return (pt);
 }

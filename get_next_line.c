@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: bemoreau <bemoreau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/16 10:51:24 by bemoreau          #+#    #+#             */
-/*   Updated: 2019/12/17 21:55:32 by marvin           ###   ########.fr       */
+/*   Updated: 2019/12/18 18:38:24 by bemoreau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
-
 
 static int		ft_free(char **line, t_struct *v, int fd)
 {
@@ -54,6 +52,7 @@ static int		ft_ret(t_struct *v, char **line, int fd, int bool)
 	if (bool == 0)
 	{
 		*line = ft_strdup(v->s[fd], v->len);
+		v->s[fd] = NULL;
 		return (0);
 	}
 	if (bool == 1 || bool == 2)
@@ -64,9 +63,9 @@ static int		ft_ret(t_struct *v, char **line, int fd, int bool)
 		if (!(v->tmp = ft_substr(v->s[fd], v->pos + 1, v->len, 1)))
 			return (ft_free(line, v, fd));
 		if (bool == 2 && !(v->s[fd] = ft_strdup(v->tmp, v->len)))
-				return (ft_free(line, v, fd));
+			return (ft_free(line, v, fd));
 		if (bool == 1 && !(v->s[fd] = ft_strdup(v->tmp, v->len)))
-				return (ft_free(line, v, fd));
+			return (ft_free(line, v, fd));
 		return (1);
 	}
 	return (-1);
@@ -104,15 +103,13 @@ int				get_next_line(int fd, char **line)
 {
 	static t_struct v;
 
-	if (line == NULL)
+	if (line == NULL || BUFFER_SIZE <= 0 || read(fd, NULL, 0) == -1)
 		return (-1);
-	if (BUFFER_SIZE <= 0 || read(fd, NULL, 0) == -1)
-		return (ft_free(line, &v, fd));
+	if (!v.s[fd])
+		if (!(v.s[fd] = ft_calloc(0, 0)))
+			return (ft_free(line, &v, fd));
 	if (!(v.buffer = ft_calloc(1, BUFFER_SIZE + 1)))
 		return (ft_free(line, &v, fd));
-	if (!v.s[fd])
-		if (!(v.s[fd] = ft_calloc(1, 0)))
-			return (ft_free(line, &v, fd));
 	v.len = ft_strlen(v.s[fd]);
 	if ((v.pos = ft_charset(v.s[fd])) >= 0)
 	{

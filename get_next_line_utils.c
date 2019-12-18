@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: bemoreau <bemoreau@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/13 06:44:06 by bemoreau          #+#    #+#             */
-/*   Updated: 2019/12/17 21:37:31 by marvin           ###   ########.fr       */
+/*   Updated: 2019/12/18 18:29:54 by bemoreau         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ char	*ft_calloc(int count, int size)
 	{
 		if (!(c = (char *)malloc(1)))
 			return (NULL);
-		c[0] = 0;
-		return ((void *)c);
+		c[0] = '\0';
+		return (c);
 	}
 	len = size * count;
 	i = 0;
